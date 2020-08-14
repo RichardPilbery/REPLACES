@@ -1,21 +1,19 @@
-# Introduction {#intro}
+# Introduction {-}
 
-You can label chapter and section titles using `{#label}` after them, e.g., we can reference Chapter \@ref(intro). If you do not manually label them, there will be automatic labels anyway, e.g., Chapter \@ref(methods).
+Falls in the community can have a serious impact on the health of people aged 65 and over. In around 5% of cases a fall leads to fracture and hospitalisation [@rubenstein_quality_2001]. Reducing falls and the associated risks to health is a priority for Public Health England, the Association of Ambulance Chief Executives and other partners [@public_health_england_falls_2017].
 
-Figures and tables with captions will be placed in `figure` and `table` environments, respectively.
+A high proportion, 42.5%, of English ambulance service patients that have called for a fall are discharged at scene [@ocathain_understanding_2018]. Yorkshire Ambulance Service (YAS) ambulance clinicians are able to refer these patients to falls teams, within Leeds this is the Leeds Community Healthcare NHS Trust Leeds Intermediate Care Team (LICT), which receives between 70-100 referrals per month from YAS.
 
-```{r nice-fig, fig.cap='Here is a nice figure!', out.width='80%', fig.asp=.75, fig.align='center'}
-par(mar = c(4, 4, .1, .1))
-plot(pressure, type = 'b', pch = 19)
-```
+At present, if a patient has been prescribed four or more medicines (polypharmacy) or is noted to have difficulty managing their medicines (e.g. stockpiling) there is no guidance for attending ambulance crews about raising concerns. This is significant, since polypharmacy is a known risk factor for falls [@dhalwani_association_2017] but is not currently the subject of any prevention strategy in the ambulance service.
 
-Reference a figure by its code chunk label with the `fig:` prefix, e.g., see Figure \@ref(fig:nice-fig). Similarly, you can reference tables generated from `knitr::kable()`, e.g., see Table \@ref(tab:nice-tab).
+YAS and the Leeds GP Confederation are collaborating on the Pharmacist Review of medications following a Fall attended by the AmbulanCE Service (PREFACES) project. This service evaluation has been running since May 2019 and is designed to link ambulance clinicians that have identified patients at risk of subsequent falls and that may have poor medicines management at home, with community pharmacists, to promote the safe use of medicines in falls prevention in one region within YAS. 
 
-```{r nice-tab, tidy=FALSE}
-knitr::kable(
-  head(iris, 20), caption = 'Here is a nice table!',
-  booktabs = TRUE
-)
-```
+However, it is unknown how ambulance staff identify patients who may be at risk of future falls due to medicines being taken or issues with medicines management at home. This data is not currently collected in any ambulance patient records. It is also not known what their current practice is when a patient who is not managing their medicines well is identified. A literature search has revealed no papers on this topic. This research survey seeks to understand how ambulance clinicians identify and assist patients who are having difficulty in managing their medicines. 
 
-You can write citations, too. For example, we are using the **bookdown** package [@R-bookdown] in this sample book, which was built on top of R Markdown and **knitr** [@xie2015].
+## Objectives
+The primary objective was to determine the most important factors that ambulance clinicians use to identify patients who are having difficulty managing their medicines. The secondary objectives were:
+
+1.  To identify the perceived frequency that ambulance clinicians encounter patients who are having difficulty managing their medicines.
+2.  To determine the value ambulance clinicians place on a community medication review (CMR) referral pathway.
+3.  To identify any correlation between ambulance clinicians demographic factors and the value they place on a community medication review referral pathway.
+

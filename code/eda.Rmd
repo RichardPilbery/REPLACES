@@ -1,7 +1,22 @@
+---
+title: "REPLACES-EDA"
+author: "Richard Pilbery"
+date: "14/08/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, warning = F, message = F, out.width = "100%", fig.width = 8)
+```
+
+
+```{r prep}
 library(tidyverse)
 library(readxl)
 
-df <- read_xlsx('data/REPLACES-results.xlsx') %>%
+df <- read_xlsx('../data/REPLACES-results.xlsx') %>%
   filter(!is.na(`Submission Date`)) %>%
   select(-ID, -`No Label`) %>%
   mutate(
@@ -15,22 +30,44 @@ colnames(df) <- c("submission_date", "consent", "current_role", "freq_frontline_
 df1 <- df %>%
   mutate(
     refer_cmr = ifelse(grepl("know", refer_cmr), "unsure", refer_cmr),
-    non_convey = case_when(
+    falls_non_convey = case_when(
       as.numeric(percent_non_convey) < 60 ~ "0-50%",
       as.numeric(percent_non_convey) >= 80 ~ "80-100%",
       TRUE ~ "60-70%"
-    )
+    ),
+    refer_pathway = case_when(
+      as.numeric(percent_falls_pathway) < 60 ~ "0-50%",
+      as.numeric(percent_falls_pathway) >= 80 ~ "80-100%",
+      TRUE ~ "60-70%"
+    ),
+    falls_gp_referral = case_when(
+      as.numeric(percent_falls_gp) < 60 ~ "0-50%",
+      as.numeric(percent_falls_gp) >= 80 ~ "80-100%",
+      TRUE ~ "60-70%"
+    ),
+    falls_diff_meds = case_when(
+      as.numeric(percent_pt_diff_meds) < 60 ~ "0-50%",
+      as.numeric(percent_pt_diff_meds) >= 80 ~ "80-100%",
+      TRUE ~ "60-70%"
+    ),
   )
 
-glimpse(df1)
+df2 <- df1 %>% mutate(
+  current_role = forcats::fct_lump(current_role, 9, other_level = "other"),
+  have_referred = ifelse(grepl("yes", refer_cmr), "yes", "no"),
+  important_cmr_refer = factor(important_cmr_refer, levels = c("very important", "important", "neutral", "unimportant", "very unimportant")),
+  freq_falls = factor(freq_falls, levels = c("more than once a shift", "once a shift", "once a week", "once a month")),
+)
+
+#glimpse(df1)
 
 # Rows: 146
-# Columns: 15
+# Columns: 20
 # $ submission_date        <chr> "2019-10-31 12:38:13", "2019-10-31 12:26...
 # $ consent                <chr> "i have read the study information, and ...
-# $ current_role           <chr> "paramedic", "locality manager", "parame...
+# $ current_role           <fct> "paramedic", "other", "paramedic", "clin...
 # $ freq_frontline_ops     <chr> "full-time (37.5 hours a week)", "part-t...
-# $ freq_falls             <chr> "more than once a shift", "once a month"...
+# $ freq_falls             <fct> more than once a shift, once a month, mo...
 # $ percent_non_convey     <chr> "50", "20", "80", "10", "60", "80", "0",...
 # $ percent_falls_pathway  <chr> "50", "100", "60", "10", "60", "50", "10...
 # $ percent_falls_gp       <chr> "20", "20", "60", "10", "100", "20", "10...
@@ -38,30 +75,147 @@ glimpse(df1)
 # $ percent_pt_diff_meds   <chr> "30", "0", "30", "10", "50", "30", "20",...
 # $ risk_factors_meds_diff <chr> "1patient says they wish they could stop...
 # $ refer_cmr              <chr> "yes and work in the leeds area", "no, b...
-# $ important_cmr_refer    <chr> "very important", "important", "importan...
+# $ important_cmr_refer    <fct> very important, important, important, ve...
 # $ care_plan              <chr> "referral to falls team\r\n\r\nfall patt...
 # $ id                     <chr> "1", "2", "3", "4", "5", "6", "7", "8", ...
+# $ falls_non_convey       <chr> "0-50%", "0-50%", "80-100%", "0-50%", "6...
+# $ refer_pathway          <chr> "0-50%", "80-100%", "60-70%", "0-50%", "...
+# $ falls_gp_referral      <chr> "0-50%", "0-50%", "60-70%", "0-50%", "80...
+# $ falls_diff_meds        <chr> "0-50%", "0-50%", "0-50%", "0-50%", "0-5...
+# $ have_referred          <chr> "yes", "no", "no", "no", "no", "no", "no...
 
-df1 %>%
+```
+
+## Summary table
+
+```{r summary}
+
+library(tableone)
+
+vars <- c("current_role", "freq_frontline_ops", "freq_falls",  "falls_non_convey", "refer_pathway", "falls_gp_referral", "important_cmr_refer")
+
+summary_table <- CreateTableOne(
+  data = df2,
+  vars = vars,
+  strata = "have_referred",
+  factorVars = vars,
+  test = F,
+  addOverall = T,
+  includeNA = T
+)
+kableone(print(summary_table, showAllLevels = T))
+
+```
+
+
+
+## Percentage figures
+
+```{r percent1}
+
+df2 %>%
   select(starts_with("percent")) %>%
   mutate_all(as.numeric) %>%
+  rename(
+    `Not-conveyed after fall` = percent_non_convey,
+    `Falls referral made` = percent_falls_pathway,
+    `GP referral made after fall` = percent_falls_gp,
+    `Falls patient with meds difficulty` = percent_pt_diff_meds
+  ) %>%
   pivot_longer(., cols = everything(), names_to="item", values_to = "percent") %>%
   ggplot(aes(x = percent, fill = item)) +
-  scale_fill_viridis_d() +
+  #scale_fill_viridis_d() +
+  theme_minimal() +
   scale_x_continuous(name = "Percentage of cases", labels = seq(0, 100, 10), breaks = seq(0, 100, 10)) +
   geom_density(alpha = 0.4)
 
-df1 %>%
+```
+
+```{r percent2}
+
+df2 %>%
   select(starts_with("percent")) %>%
   mutate_all(as.numeric) %>%
+  rename(
+    `Not-conveyed after fall` = percent_non_convey,
+    `Falls referral made after fall` = percent_falls_pathway,
+    `GP referral made after fall` = percent_falls_gp,
+    `Falls patient with meds difficulty` = percent_pt_diff_meds
+  ) %>%
   pivot_longer(., cols = everything(), names_to="item", values_to = "percent") %>%
   count(item, percent) %>%
   ggplot(aes(x = percent, y = n, fill = item)) +
   #scale_fill_viridis_d() +
+  theme_minimal() +
   scale_x_continuous(name = "Percentage of cases", labels = seq(0, 100, 10), breaks = seq(0, 100, 10)) +
   geom_area(alpha = 0.4, position="identity") +
   facet_wrap(~item)
 
+```
+
+```{r rank}
+
+rank_df <- df2 %>%
+  # Split character vector into list and then put each row of the list on a new dataframe row
+  unnest(y = str_split(risk_factors_meds_diff, "\r\n\\s?", simplify = F)) %>% select(id, y) %>%
+  # Separate the number (rank) from the risk factor (item)
+  separate(col="y", into=c("rank", "item"), sep = "(?<=[\\d+])\\s?") %>%
+  filter(
+    # Only going to look at top 5 since likely people got bored after
+    # dragging and dropping 5 risk factors around the screen
+    rank <= 5,
+    # Rank 10 was split into 1 and 0. Not a problem since not including it, but it needs removing
+    item != 0
+  ) %>%
+  mutate(
+    item = str_replace(item, "\\r?\\s?\\d+", ""),
+    item = ifelse(grepl("can", item), "patient cannot recall all their prescribed medicines", item)
+  )
+
+totals_df <- rank_df %>%
+  count(item, rank) %>%
+  group_by(item) %>%
+  summarise(
+    tot_n = sum(n),
+    rank1 = sum(n[rank == "1"], na.rm = T),
+    rank2 = sum(n[rank == "2"], na.rm = T),
+    rank3 = sum(n[rank == "3"], na.rm = T),
+    rank4 = sum(n[rank == "4"], na.rm = T),
+    rank5 = sum(n[rank == "5"], na.rm = T),
+    total = 5*first(n[rank == "1"], default = 0) + 4*first(n[rank == "2"], default = 0) + 3*first(n[rank == "3"], default = 0) + 2*first(n[rank == "4"], default = 0) + first(n[rank == "5"], default = 0)
+  ) %>%
+  arrange(desc(total))
+
+tot_df2 <- totals_df %>%
+  pivot_longer(cols = c(-item, -tot_n), names_to = "name", values_to = "value") %>%
+  filter(!name %in% c("tot_n", "total"))
+
+tot_df2 %>%
+  mutate(
+    item = factor(item),
+    name = factor(name)
+  ) %>%
+  ggplot(aes(x = fct_reorder(item, tot_n), y = value, fill = name)) +
+  theme_minimal() +
+  scale_fill_viridis_d() +
+  geom_col() +
+  coord_flip()
+
+```
+
+
+```{r rank-score}
+
+totals_df %>%
+  select(item, total) %>%
+  ggplot(aes(x = fct_reorder(item, total), y = total)) +
+  geom_col() +
+  theme_minimal() +
+  coord_flip()
+
+```
+
+```{r old-stuff, include = F}
 
 df1 %>% count(forcats::fct_lump(current_role, 9, other_level = "other"), sort = T)
 
@@ -109,38 +263,7 @@ processChoices <- function(x) {
 #
 # df1 %>% select(risk_factors_meds_diff) %>% map_df(.,processChoices)
 
-rank_df <- df1 %>%
-  # Split character vector into list and then put each row of the list on a new dataframe row
-  unnest(y = str_split(risk_factors_meds_diff, "\r\n\\s?", simplify = F)) %>% select(id, y) %>%
-  # Separate the number (rank) from the risk factor (item)
-  separate(col="y", into=c("rank", "item"), sep = "(?<=[\\d+])\\s?") %>%
-  filter(
-    # Only going to look at top 5 since likely people got bored after
-    # dragging and dropping 5 risk factors around the screen
-    rank <= 5,
-    # Rank 10 was split into 1 and 0. Not a problem since not including it, but it needs removing
-    item != 0
-  ) %>%
-  mutate(
-    item = str_replace(item, "\\r?\\s?\\d+", ""),
-    item = ifelse(grepl("can", item), "patient cannot recall all their prescribed medicines", item)
-  )
 
-totals_df <- rank_df %>%
-  count(item, rank) %>%
-  group_by(item) %>%
-  summarise(
-    tot_n = sum(n),
-    total = 5*first(n[rank == "1"], default = 0) + 4*first(n[rank == "2"], default = 0) + 3*first(n[rank == "3"], default = 0) + 2*first(n[rank == "4"], default = 0) + first(n[rank == "5"], default = 0)
-  ) %>%
-  arrange(desc(total))
-
-rank_df %>%
-  mutate(
-    item = factor(item)
-  ) %>%
-  ggplot(aes(x = item, fill = rank)) +
-  geom_bar()
 
 # Check choices have been correctly extracted:
 # df1 %>% filter(id == 22) %>% select(risk_factors_meds_diff) %>% pull(risk_factors_meds_diff)
@@ -158,14 +281,4 @@ rank_df %>%
 # 4 4     unused medicines around the home
 # 5 5     patient says they wish they could stop taking some of their medicines
 
-library(tableone)
-
-summary_table <- CreateTableOne(
-  data = df2,
-  vars = c("current_role", "freq_frontline_ops", "freq_falls", "important_cmr_refer"),
-  strata = "refer_cmr",
-  factorVars = c("current_role", "freq_frontline_ops", "freq_falls", "important_cmr_refer"),
-  test = F,
-  addOverall = T
-)
-kableone(summary_table)
+```
