@@ -2,8 +2,10 @@
 title: "REPLACES-EDA"
 author: "Richard Pilbery"
 date: "14/08/2020"
-output: html_document
-editor_options: 
+output:
+  word_document: default
+  html_document: default
+editor_options:
   chunk_output_type: console
 ---
 
@@ -127,7 +129,8 @@ df2 %>%
   #scale_fill_viridis_d() +
   theme_minimal() +
   scale_x_continuous(name = "Percentage of cases", labels = seq(0, 100, 10), breaks = seq(0, 100, 10)) +
-  geom_density(alpha = 0.4)
+  geom_density(alpha = 0.4) +
+  theme(legend.position = "bottom")
 
 ```
 
@@ -149,7 +152,8 @@ df2 %>%
   theme_minimal() +
   scale_x_continuous(name = "Percentage of cases", labels = seq(0, 100, 10), breaks = seq(0, 100, 10)) +
   geom_area(alpha = 0.4, position="identity") +
-  facet_wrap(~item)
+  facet_wrap(~item) +
+  theme(legend.position = "bottom")
 
 ```
 
@@ -199,7 +203,8 @@ tot_df2 %>%
   theme_minimal() +
   scale_fill_viridis_d() +
   geom_col() +
-  coord_flip()
+  coord_flip() +
+  theme(legend.position = "bottom")
 
 ```
 
@@ -211,7 +216,8 @@ totals_df %>%
   ggplot(aes(x = fct_reorder(item, total), y = total)) +
   geom_col() +
   theme_minimal() +
-  coord_flip()
+  coord_flip() +
+  theme(legend.position = "bottom")
 
 ```
 

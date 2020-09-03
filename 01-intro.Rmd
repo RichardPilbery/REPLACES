@@ -2,7 +2,7 @@
 
 Falls in the community can have a serious impact on the health of people aged 65 and over. In around 5% of cases a fall leads to fracture and hospitalisation [@rubenstein_quality_2001]. Reducing falls and the associated risks to health is a priority for Public Health England, the Association of Ambulance Chief Executives and other partners [@public_health_england_falls_2017].
 
-A high proportion, 42.5%, of English ambulance service patients that have called for a fall are discharged at scene [@ocathain_understanding_2018]. Yorkshire Ambulance Service (YAS) ambulance clinicians are able to refer these patients to falls teams, within Leeds this is the Leeds Community Healthcare NHS Trust Leeds Intermediate Care Team (LICT), which receives between 70-100 referrals per month from YAS.
+A high proportion, 42.5%, of English ambulance service patients that have called for a fall are discharged at scene [@ocathain_understanding_2018]. Yorkshire Ambulance Service NHS Trust (YAS) ambulance clinicians are able to refer these patients to falls teams, within Leeds this is the Leeds Community Healthcare NHS Trust Leeds Intermediate Care Team (LICT), which receives between 70-100 referrals per month from YAS.
 
 At present, if a patient has been prescribed four or more medicines (polypharmacy) or is noted to have difficulty managing their medicines (e.g. stockpiling) there is no guidance for attending ambulance crews about raising concerns. This is significant, since polypharmacy is a known risk factor for falls [@dhalwani_association_2017] but is not currently the subject of any prevention strategy in the ambulance service.
 
@@ -10,7 +10,10 @@ YAS and the Leeds GP Confederation are collaborating on the Pharmacist Review of
 
 However, it is unknown how ambulance staff identify patients who may be at risk of future falls due to medicines being taken or issues with medicines management at home. This data is not currently collected in any ambulance patient records. It is also not known what their current practice is when a patient who is not managing their medicines well is identified. A literature search has revealed no papers on this topic. This research survey seeks to understand how ambulance clinicians identify and assist patients who are having difficulty in managing their medicines. 
 
-## Objectives
+## Aim and Objectives {-}
+
+This study aimed to understand how ambulance clinicians identify and assist patients who are having difficulties with managing their medicines.
+
 The primary objective was to determine the most important factors that ambulance clinicians use to identify patients who are having difficulty managing their medicines. The secondary objectives were:
 
 1.  To identify the perceived frequency that ambulance clinicians encounter patients who are having difficulty managing their medicines.

@@ -6,6 +6,7 @@ output: bookdown::word_document2
 documentclass: article
 bibliography: ['PEPPR refs.bib']
 papersize: a4
+site: bookdown::bookdown_site
 geometry: margin=2cm
 link-citations: yes
 
