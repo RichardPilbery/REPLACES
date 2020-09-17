@@ -1,0 +1,24 @@
+---
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+# Results {-}
+
+```{r results, echo=F, message=F, warning=F}
+  # Use pandoc for Word documents
+  format="pandoc"
+
+knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = F, fig.align = 'center', out.width = '90%', fig.width = 10)
+
+library(tidyverse)
+library(lubridate)
+library(tableone)
+library(readxl)
+library(yardstick)
+
+
+
+
+
+```

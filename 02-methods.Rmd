@@ -2,16 +2,16 @@
 
 This study utlised an online survey to collate responses from clinicians who work in one  regional NHS Ambulance Trust. The online survey consisted of a front page explaining the study and contained a link to the participant information sheet.Participants were asked to indicate their consent to participate using an online form prior to commencing the 12 question online survey (Supplementary 1).
 
-# Setting {-}
+## Setting
 
 YAS provides 24-hour emergency and health care services for the county of Yorkshire in the north of England. The county has a population of approximately five million, spread over almost 6000 square miles of varied terrain, included isolated moors and dales, coastline and heavily populated urban areas. In 2018/19 YAS received more than 998,500 emergency calls and responded to 798,968 incidents by either sending clinicians to scene or by providing assessment and advice over the telephone. While the pharmacy referral was restricted to the Leeds confederation footprint, the survey was open to all staff, in recognition of a future potential roll-out of the referral pathway.
 
-# Participants and recruitment {-}
+## Participants and recruitment
 
 YAS clinical ambulance staff of all grades who had face-to-face contact with patients were eligible to participate. Staff were invited to particiapte in the study via the weekly staff bulletin and by email. Recruitment was also supplemented by convenience sampling at YAS events such asclinical roadshows, continuing professional development (CPD) events and other training sessions. At these events, potential participants were approached by a member of the YAS research team, who are all Good Clinical Practice (GCP) trained and able to offer the potential participant the opportunity to complete the survey confidentially online using a tablet or laptop computer during the events. The survey was open during the pharmacy referral project time period (24th May, 2019 to 31st May, 2020).
 
 
-## Outcomes {-}
+## Outcomes
 
 The primary outcome measure was the weighted average of factors that identify patients having difficulty managing their medicines, ranked in order of importance by ambulance clinicians. Secondary outcomes included determining the:
 
@@ -20,17 +20,17 @@ The primary outcome measure was the weighted average of factors that identify pa
 3.	Correlation between participant reported value of a CMR referral pathway and participant demographic variables
 
 
-## Statistical analysis {-}
+## Statistical analysis 
 
-### Sample size calculation {-}
+### Sample size calculation
 
 No formal sample size calculation was undertaken, but based on a previous targeted survey where 104 out of 304 ambulance clinician responded (approximately 30% response rate), we anticipate that around 10% or eligible clinicians would respond to a non-targeted survey. The eligible population at the time of the study was 3294 (as at March 2019) therefore we anticipated achieving a response of approximately 330 participants. 
 
-### Primary outcome analysis {-}
+### Primary outcome analysis 
 
 Participants were asked to rank 10 factors in order of importance that they considered when determining whether a patient was having difficulty managing their medicines. The list was compiled by a group consisting of ambulance clinicians, pharmacists and patients. From this, the weighted average was calculated for each of the 10 factors.
 
-### Secondary outcome analysis {-}
+### Secondary outcome analysis 
 
 Descriptive statistics were used to report the demographic details of respondents, the perceived proportion of falls patients attended by respondents who have difficulty managing their medicines and summarise the value respondents place on a CMR referral pathway on a 5-point Likert scale.
 
