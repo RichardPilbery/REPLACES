@@ -18,7 +18,126 @@ library(readxl)
 library(yardstick)
 
 
+questions <- readRDS('data/orig_col_names.rds')
 
+df <- readRDS('data/df.rds') %>%
+  mutate_at(vars(starts_with("freq_fall_"), "prop_non_convey_diff_meds"), as.numeric) %>%
+  # Tidy up some values and combine others with
+  # small values
+  mutate(
+    role = case_when(
+      role %in% c("cdm", "clinical supervisor", "consultant paramedic", "locality manager", "manager", "frequent caller case officer") ~ "manager",
+    grepl("student", role) ~ "student paramedic",
+    role %in% c("eca", "emergency care assistant") ~ "emergency care assistant",
+    TRUE ~ role
+    ),
+    cmr_refer = case_when(
+      grepl("know", cmr_refer) ~ "unsure",
+      TRUE ~ cmr_refer
+    ),
+    cmr_yes_no = ifelse(grepl("yes", cmr_refer), "yes", "no/unsure"),
+    # Sort cmr referral importance as factor
+    imp_cmr_refer_option = ordered(imp_cmr_refer_option, levels = c("very important", "important", "neutral", "unimportant", "very unimportant")),
+    freq_falls_over65 = factor(freq_falls_over65, levels = c("more than once a shift", "once a shift", "once a week", "once a month")),
+  )
+
+
+df1 <- df %>%
+  rename(
+    `respondent role` = role,
+    `full-time/part-time` = freq_ops,
+    # Note use of bang-bang and :=
+    !!questions[4]  := freq_falls_over65,
+    !!questions[5]  := freq_fall_nonconvey,
+    !!questions[6]  := freq_fall_refer,
+    !!questions[7]  := freq_fall_gp,
+    !!questions[13] := prop_non_convey_diff_meds,
+    !!questions[15] := cmr_refer,
+    !!questions[16] := imp_cmr_refer_option
+  )
+
+vars <- df1 %>% select("respondent role", "full-time/part-time",  questions[4:7], questions[c(13,15:16)]) %>% colnames()
+
+summary_table <- CreateTableOne(
+  vars = vars,
+  strata = "cmr_yes_no",
+  data = df1,
+  test = F,
+  factorVars = c("respondent role", "full-time/part-time", questions[4],  questions[15], questions[16]),
+  includeNA = T,
+  addOverall = T
+)
+
+nonnormal <- questions[c(4:7,13)]
+
+cmr_summary = df1 %>% count(cmr_yes_no)
+
+```
+
+There were `r df1 %>% count() %>% pull(n)` responses to the survey, including `r cmr_summary$n[2]`/`r df1 %>% count() %>% pull(n)` (`r round((cmr_summary$n[2]/df1 %>% count() %>% pull(n))*100, 1)`%) from clinicians who had made a CMR referral (Table \@ref(tab:summary-data])).
+
+
+```{r summary-data}
+
+kableone(print(summary_table, showAllLevels = T, nonnormal = nonnormal, caption = "Summary of survey responses"))
+
+```
+
+## Primary outcome
+
+
+
+```{r rank}
+
+rank_df <- df %>%
+  select(id, risk_factors_diff_meds) %>%
+  # Split character vector into list and then put each row of the list on a new dataframe row
+  unnest(y = str_split(risk_factors_diff_meds, "\r\n\\s?", simplify = F)) %>% select(id, y) %>%
+  # Separate the number (rank) from the risk factor (item)
+  separate(col="y", into=c("rank", "item"), sep = "(?<=[\\d+])\\s?") %>%
+  filter(
+    # Only going to look at top 5 since likely people got bored after
+    # dragging and dropping 5 risk factors around the screen
+    rank <= 5,
+    # Rank 10 was split into 1 and 0. Not a problem since not including it, but it needs removing
+    item != 0
+  ) %>%
+  mutate(
+    item = str_replace(item, "\\r?\\s?\\d+", ""),
+    item = ifelse(grepl("can", item), "patient cannot recall all their prescribed medicines", item)
+  )
+
+totals_df <- rank_df %>%
+  count(item, rank) %>%
+  group_by(item) %>%
+  summarise(
+    tot_n = sum(n),
+    rank1 = sum(n[rank == "1"], na.rm = T),
+    rank2 = sum(n[rank == "2"], na.rm = T),
+    rank3 = sum(n[rank == "3"], na.rm = T),
+    rank4 = sum(n[rank == "4"], na.rm = T),
+    rank5 = sum(n[rank == "5"], na.rm = T),
+    total = 5*first(n[rank == "1"], default = 0) + 4*first(n[rank == "2"], default = 0) + 3*first(n[rank == "3"], default = 0) + 2*first(n[rank == "4"], default = 0) + first(n[rank == "5"], default = 0),
+    wght_mean = round(total/tot_n,1)
+  ) %>%
+  arrange(desc(wght_mean)) %>%
+  select(-total) %>%
+  select(item, rank1, rank2, rank3, rank4, rank5, tot_n, wght_mean)
+
+colnames(totals_df) <- c("Risk factor",  "1st", "2nd", "3rd", "4th", "5th","total number of responses", "weighted mean")
 
 
 ```
+
+
+```{r rank-score}
+
+knitr::kable(totals_df, caption = "Risk factors for patients having difficulty managing their medication ordered by weight mean")
+
+```
+
+
+
+## Secondary outcome
+
+Descriptive statistics will be used to describe the perceived proportion of falls patients who may have difficulty managing medicines by respondents.  Descriptive statistics will also be used to summarise the value respondents place on a CMR referral pathway, which will be reported on a 5-point Likert scale. Finally, the correlation between the 5-point Likert scale of the value of a CMR referral pathway and respondent demographic details (current role, length of service and frequency of operational duties) will be determine using ordinal logistic regression to account for the ordinal nature of the Likert scale. 
