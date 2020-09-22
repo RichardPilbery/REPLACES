@@ -11,6 +11,7 @@ editor_options:
 
 knitr::opts_chunk$set(echo = F, message = F, warning = F, cache = F, fig.align = 'center', out.width = '90%', fig.width = 10)
 
+library(bookdown)
 library(tidyverse)
 library(lubridate)
 library(tableone)
@@ -72,18 +73,84 @@ nonnormal <- questions[c(4:7,13)]
 
 cmr_summary = df1 %>% count(cmr_yes_no)
 
+
+# Process free text response coding
+
+
+struggle_df <- df %>%
+  dplyr::select(starts_with("struggle_theme")) %>%
+  mutate(
+    id = row_number()
+  ) %>%
+  pivot_longer(cols = starts_with("struggle"), 
+               names_to=c("rank", "person"), 
+               names_pattern = "struggle_theme_?(.*)\\.(.*)",
+               values_to = "theme") %>%
+  filter(!is.na(theme)) %>%
+  group_by(id) %>%
+  summarise(
+    "observation of living situation" = sum(theme == "observation of living situation"),
+    "observation of patient" = sum(theme == "observation of patient"),
+    "patient / carer discussion / disclosure" = sum(theme == "patient / carer discussion / disclosure"),
+    "patient clinical presentation" = sum(theme == "patient clinical presentation"),
+  ) %>%
+  pivot_longer(cols = -id, names_to = "theme", values_to = "value") %>%
+  filter(value == 2) %>%
+  count(theme, sort = T)
+
+care_df <- df %>%
+  dplyr::select(starts_with("care_plan_theme")) %>%
+  mutate(
+    id = row_number()
+  ) %>%
+  pivot_longer(cols = starts_with("care"), 
+               names_to=c("rank", "person"), 
+               names_pattern = "care_plan_theme_?(.*)\\.(.*)",
+               values_to = "theme") %>%
+  filter(!is.na(theme)) %>%
+  group_by(id) %>%
+  summarise(
+    "discuss and confirm" = sum(theme == "discuss and confirm"),
+    "immediate mitigation" = sum(theme == "immediate mitigation"),
+    "referral" = sum(theme == "referral"),
+    "safety net" = sum(theme == "safety net"),
+  ) %>%
+  pivot_longer(cols = -id, names_to = "theme", values_to = "value") %>%
+  filter(value == 2) %>%
+  count(theme, sort = T)
+
 ```
 
-There were `r df1 %>% count() %>% pull(n)` responses to the survey, including `r cmr_summary$n[2]`/`r df1 %>% count() %>% pull(n)` (`r round((cmr_summary$n[2]/df1 %>% count() %>% pull(n))*100, 1)`%) from clinicians who had made a CMR referral (Table \@ref(tab:summary-data])).
+There were `r df1 %>% count() %>% pull(n)` responses to the survey, including `r cmr_summary$n[2]`/`r df1 %>% count() %>% pull(n)` (`r round((cmr_summary$n[2]/df1 %>% count() %>% pull(n))*100, 1)`%) from clinicians who had made a CMR referral (Table \@ref(tab:summarytable)).
+
+Most FT
+Most experienced patient falling at least once a shift or higher
+Responses relating to falling and referrals similar between groups except:
+Higher percentage of aptients not conveyed 40 vs 50
+Diff with meds 30 vs 50
+
+Importance of CMR referrak: Similar between groups 85.1% vs 88.9%
+
+The highest weighted mean scores for risk factors were
+Patient not taking medication as prescribed
+Unused medicines around the home
+
+Also these two had highest number of responses.
+
+There was no correlation between Likert score and the role or FT/PT status of respondent.
 
 
-```{r summary-data}
 
-kableone(print(summary_table, showAllLevels = T, nonnormal = nonnormal, caption = "Summary of survey responses"))
+
+
+```{r summarytable}
+
+kableone(print(summary_table, showAllLevels = T, nonnormal = nonnormal), format = format, caption = "Summary of survey responses")
 
 ```
 
-## Primary outcome
+## Primary outcome {-}
+
 
 
 
@@ -132,12 +199,64 @@ colnames(totals_df) <- c("Risk factor",  "1st", "2nd", "3rd", "4th", "5th","tota
 
 ```{r rank-score}
 
-knitr::kable(totals_df, caption = "Risk factors for patients having difficulty managing their medication ordered by weight mean")
+knitr::kable(totals_df, caption = "Risk factors for patients having difficulty managing their medication ordered by weight mean", format = format)
+
+```
+
+For the primary outcome see Table \@ref(tab:rank)).
+
+## Secondary outcome {-}
+
+Descriptive statistics will be used to describe the perceived proportion of falls patients who may have difficulty managing medicines by respondents.  Descriptive statistics will also be used to summarise the value respondents place on a CMR referral pathway, which will be reported on a 5-point Likert scale. Finally, the correlation between the 5-point Likert scale of the value of a CMR referral pathway and respondent demographic details (current role, length of service and frequency of operational duties) will be determine using ordinal logistic regression to account for the ordinal nature of the Likert scale. 
+
+```{r}
+
+library(MASS)
+
+df2 <- df %>%
+  dplyr::select(role, freq_ops, cmr_yes_no, imp_cmr_refer_option, freq_falls_over65, freq_fall_refer) %>%
+  mutate(paramedic = ifelse(grepl("paramedic", role), 1, 0))
+
+#fit <- polr(imp_cmr_refer_option ~ paramedic + freq_ops, data = df2)
+
+fit <- polr(imp_cmr_refer_option ~ relevel(as.factor(role), ref = "paramedic") + freq_ops, data = df2, Hess = T)
+
+olr_result <- tidy(fit, exponentiate = T, conf.int = T, p.values = T)
+
+olr_res2 <- olr_result %>% 
+   mutate_if(is.double, round,2) %>% 
+  filter(coef.type == "coefficient") %>% 
+  mutate(
+    `95% CI` = paste0(conf.low,"--", conf.high),
+    term = case_when(
+      # https://stackoverflow.com/questions/3872070/how-to-force-r-to-use-a-specified-factor-level-as-reference-in-a-regression
+      #https://stackoverflow.com/a/32767436/3650230
+      
+      grepl("relevel", term) ~ gsub(".*?)", "", str_replace(term, " \\(.*\\)", "")),
+      TRUE ~ str_replace(term, "freq_ops", "")
+    )
+  ) %>%
+  dplyr::select(term, estimate, `95%CI`)
+
+knitr::kable(olr_res2, caption = "Ordinal regression model between reported importance of CMR referral and respondent role and frequency of operational duties")
+
+#coeffs <- coef(summary(fit))
+#p <- pnorm(abs(coeffs[,"t value"]), lower.tail = F) * 2
+
+#cbind(coeffs, "p value" = round(p, 3))
 
 ```
 
 
+```{r code-struggle}
 
-## Secondary outcome
+knitr::kable(struggle_df, caption = "Themes arising from free-text responses relating to respondents identifying a patient having difficulty with their medication", format = format)
 
-Descriptive statistics will be used to describe the perceived proportion of falls patients who may have difficulty managing medicines by respondents.  Descriptive statistics will also be used to summarise the value respondents place on a CMR referral pathway, which will be reported on a 5-point Likert scale. Finally, the correlation between the 5-point Likert scale of the value of a CMR referral pathway and respondent demographic details (current role, length of service and frequency of operational duties) will be determine using ordinal logistic regression to account for the ordinal nature of the Likert scale. 
+```
+
+
+```{r code-plan}
+
+knitr::kable(care_df, caption = "Themes arising from free-text responses relating to care planning for patients having difficulty managing their medication", format = format)
+
+```
