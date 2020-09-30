@@ -121,25 +121,7 @@ care_df <- df %>%
 
 ```
 
-There were `r df1 %>% count() %>% pull(n)` responses to the survey, including `r cmr_summary$n[2]`/`r df1 %>% count() %>% pull(n)` (`r round((cmr_summary$n[2]/df1 %>% count() %>% pull(n))*100, 1)`%) from clinicians who had made a CMR referral (Table \@ref(tab:summarytable)).
-
-Most FT
-Most experienced patient falling at least once a shift or higher
-Responses relating to falling and referrals similar between groups except:
-Higher percentage of aptients not conveyed 40 vs 50
-Diff with meds 30 vs 50
-
-Importance of CMR referrak: Similar between groups 85.1% vs 88.9%
-
-The highest weighted mean scores for risk factors were
-Patient not taking medication as prescribed
-Unused medicines around the home
-
-Also these two had highest number of responses.
-
-There was no correlation between Likert score and the role or FT/PT status of respondent.
-
-
+There were `r df1 %>% count() %>% pull(n)` responses to the survey, including `r cmr_summary$n[2]`/`r df1 %>% count() %>% pull(n)` (`r round((cmr_summary$n[2]/df1 %>% count() %>% pull(n))*100, 1)`%) from clinicians who had made a CMR referral (Table \@ref(tab:summarytable)). The majority of respondents were full-time, a paramedic and attended 1 or more fall-related calls per shift. Responses to most questions were similar between respondents who had made a CMR referral and those who had not, with the exception that CMR referral respondents perceived a higher proportion of patients who were not conveyed after a fall having difficulty with their medicines (50% vs 40%). Both groups had a high number of respondents who reported having an option to make a CMR referral being important or very important (88.9% and 85.1% for CMR referral and non-CMR referral groups respectively).
 
 
 
@@ -149,10 +131,13 @@ kableone(print(summary_table, showAllLevels = T, nonnormal = nonnormal), format 
 
 ```
 
-## Primary outcome {-}
 
+The risk factors identifying patients having difficulty managing their medicines with the highest weighted mean scores, as voted by respodnents, were patients stating that they were not taking their medicines as prescribed and the presence of unused medicines around the home (Table \@ref(tab:rank-score)). These results were also reflected in the free-text responses (Table \@ref(tab:code-struggle)) relating to identification of patients having difficult with their medicines. Participant responses fell into one or more of four categories:
 
-
++ Observation of living situation e.g. stockpiled drugs, tablets on floor, chaotic lifestyle, self-neglect
++ Patient/carer discussion/disclosure e.g. unsure when to take medicine, patients stating that they are not taking medicines, family/carer concern
++ Patient clinical presentation e.g. memory problems, accidental overdose, physiological observations characterising poor management of medicated condition, polypharmacy
++ Observation of patient e.g. patient unable to open medicines packaging, difficulty in swallowing medicines, muddles inhalers.
 
 ```{r rank}
 
@@ -203,12 +188,6 @@ knitr::kable(totals_df, caption = "Risk factors for patients having difficulty m
 
 ```
 
-For the primary outcome see Table \@ref(tab:rank)).
-
-## Secondary outcome {-}
-
-Descriptive statistics will be used to describe the perceived proportion of falls patients who may have difficulty managing medicines by respondents.  Descriptive statistics will also be used to summarise the value respondents place on a CMR referral pathway, which will be reported on a 5-point Likert scale. Finally, the correlation between the 5-point Likert scale of the value of a CMR referral pathway and respondent demographic details (current role, length of service and frequency of operational duties) will be determine using ordinal logistic regression to account for the ordinal nature of the Likert scale. 
-
 ```{r}
 
 library(MASS)
@@ -236,9 +215,9 @@ olr_res2 <- olr_result %>%
       TRUE ~ str_replace(term, "freq_ops", "")
     )
   ) %>%
-  dplyr::select(term, estimate, `95%CI`)
+  dplyr::select(term, estimate, `95% CI`)
 
-knitr::kable(olr_res2, caption = "Ordinal regression model between reported importance of CMR referral and respondent role and frequency of operational duties")
+
 
 #coeffs <- coef(summary(fit))
 #p <- pnorm(abs(coeffs[,"t value"]), lower.tail = F) * 2
@@ -248,12 +227,31 @@ knitr::kable(olr_res2, caption = "Ordinal regression model between reported impo
 ```
 
 
+
 ```{r code-struggle}
 
 knitr::kable(struggle_df, caption = "Themes arising from free-text responses relating to respondents identifying a patient having difficulty with their medication", format = format)
 
 ```
 
+
+
+
+There was no apparent relationship between respondent's current role or frequency of operational duties and their value of a CMR referral pathway (Table \@ref(tab:role-cmr)).
+
+```{r role-cmr }
+
+knitr::kable(olr_res2, caption = "Ordinal regression model between reported importance of CMR referral and respondent role and frequency of operational duties")
+
+```
+
+
+Finally, care planning for patients perceived by clinicians having difficulty managing their medicines were categorised into four themes (Table \@ref(tab:code-plan)):
+
++ Referral e.g. CMR, GP, fall pathway
++ Discuss and confirm e.g. review of medical records, confirmation of situation with carer/family/other healthcare professionals
++ Immediate mitigation e.g. arranging removal of excess/out of date medication
++ Safety netting e.g. Communicating with patiens about clinician concern, providing worsening advice, liasing with carers.
 
 ```{r code-plan}
 

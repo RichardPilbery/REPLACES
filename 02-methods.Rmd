@@ -8,32 +8,27 @@ YAS provides 24-hour emergency and health care services for the county of Yorksh
 
 ## Participants and recruitment {-}
 
-YAS clinical ambulance staff of all grades who had face-to-face contact with patients were eligible to participate. Staff were invited to particiapte in the study via the weekly staff bulletin and by email. Recruitment was also supplemented by convenience sampling at YAS events such asclinical roadshows, continuing professional development (CPD) events and other training sessions. At these events, potential participants were approached by a member of the YAS research team, who are all Good Clinical Practice (GCP) trained and able to offer the potential participant the opportunity to complete the survey confidentially online using a tablet or laptop computer during the events. The survey was open during the pharmacy referral project time period (24th May, 2019 to 31st May, 2020).
-
-
-## Outcomes {-}
-
-The primary outcome measure was the weighted average of factors that identify patients having difficulty managing their medicines, ranked in order of importance by ambulance clinicians. Secondary outcomes included determining the:
-
-1.	Proportion of patients who have fallen and have difficulty managing medicines
-2.	Participant value of a community medicines review (CMR) referral pathway
-3.	Correlation between participant reported value of a CMR referral pathway and participant demographic variables
+YAS clinical ambulance staff of all grades who had face-to-face contact with patients were eligible to participate. Staff were invited to particiapte in the study via the weekly staff bulletin and by email. Recruitment was also supplemented by convenience sampling at YAS events such as clinical roadshows, continuing professional development (CPD) events and other training sessions. At these events, potential participants were approached by a member of the YAS research team, who are all Good Clinical Practice (GCP) trained, and offered the opportunity to complete the survey confidentially using a tablet or laptop computer during the events. The survey was open during the pharmacy referral project time period (which was 24th May, 2019 to 31st May, 2020).
 
 
 ## Statistical analysis {-}
 
 ### Sample size calculation {-}
 
-No formal sample size calculation was undertaken, but based on a previous targeted survey where 104 out of 304 ambulance clinician responded (approximately 30% response rate), we anticipate that around 10% or eligible clinicians would respond to a non-targeted survey. The eligible population at the time of the study was 3294 (as of March 2019) therefore we anticipated achieving a response of approximately 330 participants. 
+No formal sample size calculation was undertaken, but based on a previous targeted survey where 104 out of 304 ambulance clinician responded (approximately 30% response rate), we anticipated that around 10% or eligible clinicians would respond to a non-targeted survey. The eligible population prior to the study opening was 3294 (March 2019) therefore we anticipated achieving a response of approximately 330 participants. 
 
 ### Primary outcome analysis {-}
 
-Participants were asked to rank 10 factors in order of importance that they considered when determining whether a patient was having difficulty managing their medicines. The list was compiled by a group consisting of ambulance clinicians, pharmacists and patients. From this, the weighted average was calculated for each of the 10 factors.
+Participants were asked to rank 10 factors in order of importance that they considered when determining whether a patient was having difficulty managing their medicines. The list was compiled by a group consisting of ambulance clinicians, pharmacists and patients. From this, the weighted average was calculated for each of the 10 factors by taking the top 5 responses from each participant. The online survey required the respondent to drag-and-drop the risk factors and it was thought that the first 5 responses would be most reliable before question fatigue became a factor. The risk factors themselves were presented in a random order to each participant. The weighted average was calculated by multiplying each of the top 5 responses by 5 for rank 1, 4 for rank 2 etc. and dividing the result by the total number of responses for each risk factor.
+
+There was also an additional related question requiring a free-text response. Statements relating to difficulty in managing medicines were coded into 4 themes agreed by two of the authors who indepently coded the responses. Themes reported by both authors were tallied.
 
 ### Secondary outcome analysis {-}
 
 Descriptive statistics were used to report the demographic details of respondents, the perceived proportion of falls patients attended by respondents who have difficulty managing their medicines and summarise the value respondents place on a CMR referral pathway on a 5-point Likert scale.
 
-We examined whether there was any correlation between respondent's reported value of a CMR referral pathway and respondent demographic details (current role and frequency of operational duties) using ordinal logistic regression to take account of the Likert scoring used.  
+We examined whether there was any correlation between respondent's reported value of a CMR referral pathway and respondent demographic details (current role and frequency of operational duties) using ordinal logistic regression to take account of the Likert scoring and reported the result as odds rations with 95% confidence intervals. 
+
+Finally, a free-text question where respondents were asked to outline their care plan for patients who they identified as having difficulty in managing their medicines, was also coded using the same method as outline in the primary outcome analysis.
 
 
